@@ -1,6 +1,20 @@
+from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
 import re
 
 SAUCE_DEMO_URL = "https://www.saucedemo.com/"
+
+def open_menu_and_click(page, link_selector):
+    # The burger menu slides in with an animation; a click that lands mid-render can leave it
+    # closed, so reopen it (up to 3 times) until the link is visible
+    for attempt in range(3):
+        page.click('#react-burger-menu-btn')
+        try:
+            page.locator(link_selector).wait_for(state="visible", timeout=5000)
+            break
+        except PlaywrightTimeoutError:
+            if attempt == 2:
+                raise
+    page.click(link_selector)
 
 def login(page, username="standard_user", password="secret_sauce"):
     page.goto(SAUCE_DEMO_URL)
@@ -34,8 +48,7 @@ def test_navigate_to_cart(page):
 def test_navigate_using_burger_menu(page):
     login(page)
 
-    page.click('#react-burger-menu-btn')
-    page.click('#about_sidebar_link')
+    open_menu_and_click(page, '#about_sidebar_link')
 
     assert page.url == "https://saucelabs.com/"
 
@@ -49,8 +62,7 @@ def test_reset_app_state(page):
     assert page.locator('.shopping_cart_badge').inner_text() == "2"
 
     # Reset app state
-    page.click('#react-burger-menu-btn')
-    page.click('#reset_sidebar_link')
+    open_menu_and_click(page, '#reset_sidebar_link')
 
     # Verify cart is empty
     assert page.locator('.shopping_cart_badge').count() == 0

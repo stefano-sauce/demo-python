@@ -1,3 +1,4 @@
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -39,8 +40,19 @@ def login(driver):
     # Log in through the UI so the app routes to the inventory without a full page
     # load; the iOS simulators sometimes lose the Safari page after one
     wait = WebDriverWait(driver, 15)
-    driver.get('https://www.saucedemo.com')
-    wait.until(EC.visibility_of_element_located((By.ID, 'user-name'))).send_keys('standard_user')
+    open_login_page(driver).send_keys('standard_user')
     driver.find_element(By.ID, 'password').send_keys('secret_sauce')
     wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.btn_action'))).click()
     wait.until(EC.url_contains('/inventory.html'))
+
+
+def open_login_page(driver):
+    # iOS simulators sometimes leave Safari on a blank page after driver.get(); reload until the
+    # login form renders instead of failing the test on a browser glitch
+    for attempt in range(3):
+        driver.get('https://www.saucedemo.com')
+        try:
+            return WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.ID, 'user-name')))
+        except TimeoutException:
+            if attempt == 2:
+                raise

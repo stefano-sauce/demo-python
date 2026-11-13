@@ -1,6 +1,7 @@
 [packages]
 robotframework = "==7.4.2"
 robotframework-pabot = "==5.2.2"
+robotframework-appiumlibrary = "==3.2.1"
 
 [scripts]
 robot-android-us = "pabot --variable DATA_CENTER:'https://ondemand.us-west-1.saucelabs.com/wd/hub' -A android/android_config.txt android/tests/"

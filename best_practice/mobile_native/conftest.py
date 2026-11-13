@@ -10,6 +10,13 @@ import urllib3
 urllib3.disable_warnings()
 
 
+def sauce_tags(*tags):
+    # Sauce Labs tags for filtering jobs by repo/framework/use case; SAUCE_TAGS (comma-separated,
+    # e.g. "ci:cron") is appended so scheduled runs can be told apart from manual ones.
+    extra = [t.strip() for t in environ.get('SAUCE_TAGS', '').split(',') if t.strip()]
+    return ['repo:demo-python', 'lang:python', *tags, *extra]
+
+
 def pytest_addoption(parser):
     parser.addoption("--dc", action="store", default='us', help="Set Sauce Labs Data Center (US or EU)")
 
@@ -36,6 +43,8 @@ def android_rdc_driver(request, data_center):
         'build': 'RDC-Android-Python-Best-Practice',
         'name': request.node.name,
         'appiumVersion': 'latest',
+        'tags': sauce_tags('framework:appium', 'cli:pytest', 'usecase:native-app-best-practices',
+                           'platform:android', 'device:real-device'),
     }
     options.set_capability('sauce:options', sauce_options)
 
@@ -67,6 +76,8 @@ def ios_rdc_driver(request, data_center):
         'build': 'RDC-iOS-Python-Best-Practice',
         'name': request.node.name,
         'appiumVersion': 'latest',
+        'tags': sauce_tags('framework:appium', 'cli:pytest', 'usecase:native-app-best-practices',
+                           'platform:ios', 'device:real-device'),
     }
     options.set_capability('sauce:options', sauce_options)
 

@@ -1,12 +1,14 @@
 *** Settings ***
 Library  SeleniumLibrary
+Variables  sauce_tags.py  framework:robotframework  cli:pabot  library:seleniumlibrary
+...        usecase:desktop-web  browser:${browserName}  os:${platform}
 
 *** Variables ***
 
 ${browser}          ${browserName}
 ${remote_url}       ${DATA_CENTER}
 
-&{Sauce capabilities}  build=Python-Robot-Selenium-VDC  name=${SUITE_NAME}  username=%{SAUCE_USERNAME}  accessKey=%{SAUCE_ACCESS_KEY}
+&{Sauce capabilities}  build=Python-Robot-Selenium-VDC  name=${SUITE_NAME}  username=%{SAUCE_USERNAME}  accessKey=%{SAUCE_ACCESS_KEY}  tags=${SAUCE_TAGS_LIST}
 
 *** Keywords ***
 

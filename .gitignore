@@ -23,3 +23,11 @@
 pabot_results/*
 *xml
 *html
+
+# Per-suite virtualenvs (PIPENV_VENV_IN_PROJECT=1)
+.venv
+
+# Daily run logs
+scripts/logs/
+**/pabot_results/
+**/.pabotsuitenames

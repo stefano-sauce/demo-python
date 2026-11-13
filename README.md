@@ -102,6 +102,31 @@ This repository is divided into two main sections: `best_practice` and `examples
 
 We also recommend Pytest overall as a Python test framework and runner.
 
+## Sauce Labs tags
+
+Every job is tagged so it can be filtered in the Sauce Labs UI (Test Results > filter by tag):
+
+| Tag | Values |
+|---|---|
+| `repo:` | `demo-python` |
+| `lang:` | `python` |
+| `framework:` | `selenium`, `appium`, `playwright`, `robotframework` |
+| `cli:` | `pytest`, `pabot` |
+| `library:` | `seleniumlibrary`, `appiumlibrary` (Robot Framework only) |
+| `usecase:` | `desktop-web-best-practices`, `mobile-web-best-practices`, `native-app-best-practices`, `desktop-web`, `native-app`, `selenium4-features` |
+| `platform:` / `device:` | `android`, `ios` / `real-device`, `emulator`, `simulator` |
+| `browser:` / `os:` | browser and OS of desktop web sessions |
+
+`SAUCE_TAGS` (comma-separated) is appended to every job's tags, e.g. `SAUCE_TAGS=ci:cron`.
+
+## Running every suite
+
+`scripts/run_sauce_tests_python.sh` runs all suites on the EU data center, one after the
+other, and logs to `~/sauce_automation_python.log`. It loads `SAUCE_USERNAME` /
+`SAUCE_ACCESS_KEY` from the environment or `~/.zshrc`, keeps one virtualenv per suite
+(`<suite>/.venv`), and tags every job `ci:cron` unless `SAUCE_TAGS` is set
+(`SAUCE_TAGS="" scripts/run_sauce_tests_python.sh` for a manual run).
+
 ## Contributing
 
 Pull requests are welcome! If you see something you'd like to add, please 

@@ -1,4 +1,5 @@
 --variable deviceOrientation:portrait
 --variable platformName:Android
 --variable platformVersion:10
+--variable deviceName:.*
 --variable privateDevicesOnly:False

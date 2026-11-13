@@ -11,6 +11,13 @@ import urllib3
 
 urllib3.disable_warnings()
 
+
+def sauce_tags(*tags):
+    # Sauce Labs tags for filtering jobs by repo/framework/use case; SAUCE_TAGS (comma-separated,
+    # e.g. "ci:cron") is appended so scheduled runs can be told apart from manual ones.
+    extra = [t.strip() for t in environ.get('SAUCE_TAGS', '').split(',') if t.strip()]
+    return ['repo:demo-python', 'lang:python', *tags, *extra]
+
 emusim_browsers = [
     {
         "deviceName": "iPhone 16 Simulator",
@@ -25,16 +32,17 @@ emusim_browsers = [
         "platformVersion": "26.1",
         "platformName": "iOS"
     }, {
-        "deviceName": "Google Pixel 3 XL GoogleAPI Emulator",
+        # The GoogleAPI / Samsung emulators were retired; current Pixel emulators replace them
+        "deviceName": "Google Pixel 9 Emulator",
         "browserName": "Chrome",
         "deviceOrientation": "portrait",
-        "platformVersion": "10.0",
+        "platformVersion": "16.0",
         "platformName": "Android"
-    },{
-        "deviceName": "Samsung Galaxy S9 WQHD GoogleAPI Emulator",
+    }, {
+        "deviceName": "Google Pixel 7 Emulator",
         "browserName": "Chrome",
         "deviceOrientation": "portrait",
-        "platformVersion": "9.0",
+        "platformVersion": "14.0",
         "platformName": "Android"
     }]
 
@@ -67,15 +75,23 @@ def mobile_web_driver(request, data_center):
         'accessKey': access_key,
         'build': build_tag,
         'name': test_name,
-        'appiumVersion': 'latest',
+        # No appiumVersion: emulators/simulators reject the 'latest' alias (real devices accept it),
+        # and Sauce Labs then picks the recommended Appium for each emulator/simulator image
+        'tags': sauce_tags('framework:appium', 'cli:pytest', 'usecase:mobile-web-best-practices',
+                           'platform:' + request.param['platformName'].lower(),
+                           'device:' + ('emulator' if request.param['platformName'] == 'Android' else 'simulator'),
+                           'browser:' + request.param['browserName'].lower()),
     }
     options = AppiumOptions()
     options.set_capability('sauce:options', sauce_options)
     options.platform_name = request.param['platformName']
     options.browser_name = request.param['browserName']
-    options.platform_version = request.param['platformVersion']
-    options.device_name = request.param['deviceName']
-    options.device_orientation = request.param['deviceOrientation']
+    # The base AppiumOptions class silently ignores device_name/platform_version/device_orientation
+    # (they only exist on the platform-specific classes). Without a device name Sauce Labs runs the
+    # session on any available real device instead of the requested emulator/simulator.
+    options.set_capability('appium:platformVersion', request.param['platformVersion'])
+    options.set_capability('appium:deviceName', request.param['deviceName'])
+    options.set_capability('appium:orientation', request.param['deviceOrientation'].upper())
     options.automation_name = 'UiAutomator2' if request.param['platformName'].lower() == 'android' else 'XCUITest'
 
     browser = webdriver.Remote(
@@ -112,8 +128,12 @@ def rdc_browser(request, data_center):
     sauce_options = {
         'username': username,
         'accessKey': access_key,
-        'build': 'RDC-Android-Web-Python-Best-Practice',
+        'build': 'RDC-iOS-Web-Python-Best-Practice',
         'name': request.node.name,
+        # Without this, real devices fall back to an old default Appium (1.22) that can't find elements
+        'appiumVersion': 'latest',
+        'tags': sauce_tags('framework:appium', 'cli:pytest', 'usecase:mobile-web-best-practices',
+                           'platform:ios', 'device:real-device', 'browser:safari'),
     }
     options = XCUITestOptions()
     options.set_capability('sauce:options', sauce_options)

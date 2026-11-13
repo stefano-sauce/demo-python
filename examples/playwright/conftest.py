@@ -72,6 +72,14 @@ class WorkerSession:
 _module_sessions = {}
 
 
+def _sauce_tags(browser_name):
+    # Sauce Labs tags for filtering jobs by repo/framework/use case; SAUCE_TAGS (comma-separated,
+    # e.g. "ci:cron") is appended so scheduled runs can be told apart from manual ones.
+    extra = [t.strip() for t in os.environ.get("SAUCE_TAGS", "").split(",") if t.strip()]
+    return ["repo:demo-python", "lang:python", "framework:playwright", "cli:pytest",
+            "usecase:desktop-web", f"browser:{browser_name}", "os:linux", *extra]
+
+
 def _build_capabilities_payload(session_name, browser_name):
     return {
         "browserName": browser_name,
@@ -80,6 +88,7 @@ def _build_capabilities_payload(session_name, browser_name):
         "sauce:options": {
             "name": session_name,
             "build": SAUCE_BUILD_NAME,
+            "tags": _sauce_tags(browser_name),
         },
     }
 

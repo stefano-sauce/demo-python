@@ -3,6 +3,17 @@ from os import environ
 
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.edge.options import Options as EdgeOptions
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.safari.options import Options as SafariOptions
+
+BROWSER_OPTIONS = {
+    'chrome': ChromeOptions,
+    'firefox': FirefoxOptions,
+    'microsoftedge': EdgeOptions,
+    'safari': SafariOptions,
+}
 
 desktop_browsers = [
     {
@@ -16,23 +27,36 @@ desktop_browsers = [
         "platformVersion": "latest-1",
         "sauce:options": {}
     }, {
-        "platformName": "Windows 10",
-        "browserName": "internet explorer",
+        # Internet Explorer can't render saucedemo.com (a React app), so Chrome on Windows 11 replaces it
+        "platformName": "Windows 11",
+        "browserName": "chrome",
         "platformVersion": "latest",
         "sauce:options": {}
     }, {
-        "platformName": "OS X 10.14",
+        # OS X 10.14 is retired on Sauce Labs; extended debugging needs macOS 13 or later
+        "platformName": "macOS 13",
         "browserName": "safari",
-        "platformVersion": "latest-1",
+        "platformVersion": "latest",
         "sauce:options": {}
     }, {
-        "platformName": "OS X 10.14",
+        "platformName": "macOS 13",
         "browserName": "chrome",
         "platformVersion": "latest",
         "sauce:options": {
             "extendedDebugging": True
         }
     }]
+
+
+def slug(value):
+    return value.lower().replace(' ', '-')
+
+
+def sauce_tags(*tags):
+    # Sauce Labs tags for filtering jobs by repo/framework/use case; SAUCE_TAGS (comma-separated,
+    # e.g. "ci:cron") is appended so scheduled runs can be told apart from manual ones.
+    extra = [t.strip() for t in environ.get('SAUCE_TAGS', '').split(',') if t.strip()]
+    return ['repo:demo-python', 'lang:python', *tags, *extra]
 
 
 def pytest_addoption(parser):
@@ -58,14 +82,22 @@ def desktop_web_driver(request, data_center):
     else:
         selenium_endpoint = "https://{}:{}@ondemand.us-west-1.saucelabs.com/wd/hub".format(username, access_key)
 
-    caps = dict()
-    caps.update(request.param)
-    caps['sauce:options'].update({'build': build_tag})
-    caps['sauce:options'].update({'name': test_name})
+    browser_name = request.param['browserName']
+    options = BROWSER_OPTIONS[browser_name.lower()]()
+    options.platform_name = request.param['platformName']
+    options.browser_version = request.param['platformVersion']
+    sauce_options = dict(request.param['sauce:options'])
+    sauce_options.update({
+        'build': build_tag,
+        'name': test_name,
+        'tags': sauce_tags('framework:selenium', 'cli:pytest', 'usecase:desktop-web-best-practices',
+                           'browser:' + slug(browser_name), 'os:' + slug(request.param['platformName'])),
+    })
+    options.set_capability('sauce:options', sauce_options)
 
     browser = webdriver.Remote(
         command_executor=selenium_endpoint,
-        options=webdriver.ChromeOptions(),
+        options=options,
         keep_alive=True
     )
 
