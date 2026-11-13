@@ -12,5 +12,5 @@ Valid Login with Standard User
 
 	Login As Standard User
 
-	Page should contain element  accessibility_id=test-PRODUCTS
+	Wait Until Page Contains Element  accessibility_id=test-PRODUCTS
 	[Teardown]  End Session

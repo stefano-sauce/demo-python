@@ -133,13 +133,17 @@ def rdc_browser(request, data_center):
         # Without this, real devices fall back to an old default Appium (1.22) that can't find elements
         'appiumVersion': 'latest',
         'tags': sauce_tags('framework:appium', 'cli:pytest', 'usecase:mobile-web-best-practices',
-                           'platform:ios', 'device:real-device', 'browser:safari'),
+                           'platform:ios', 'device:real-device', 'browser:safari', 'feature:network-capture'),
+        'networkCapture': True,
     }
     options = XCUITestOptions()
     options.set_capability('sauce:options', sauce_options)
     options.platform_name = 'iOS'
     options.browser_name = 'Safari'
     options.device_name = 'iPhone.*'
+    # Appium's Safari web context attaches to a blank page on real devices with iOS 14 and iOS 26+
+    # (measured on Sauce EU: 0/13 passed there, 31/31 on iOS 16-18), so pin to iOS 18.x
+    options.platform_version = '18'
 
     if data_center and data_center.lower() == 'eu':
         sauce_url = 'https://ondemand.eu-central-1.saucelabs.com/wd/hub'

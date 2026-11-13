@@ -44,7 +44,8 @@ def android_rdc_driver(request, data_center):
         'name': request.node.name,
         'appiumVersion': 'latest',
         'tags': sauce_tags('framework:appium', 'cli:pytest', 'usecase:native-app-best-practices',
-                           'platform:android', 'device:real-device'),
+                           'platform:android', 'device:real-device', 'feature:network-capture'),
+        'networkCapture': True,
     }
     options.set_capability('sauce:options', sauce_options)
 
@@ -77,7 +78,8 @@ def ios_rdc_driver(request, data_center):
         'name': request.node.name,
         'appiumVersion': 'latest',
         'tags': sauce_tags('framework:appium', 'cli:pytest', 'usecase:native-app-best-practices',
-                           'platform:ios', 'device:real-device'),
+                           'platform:ios', 'device:real-device', 'feature:network-capture'),
+        'networkCapture': True,
     }
     options.set_capability('sauce:options', sauce_options)
 

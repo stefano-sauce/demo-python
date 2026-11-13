@@ -13,5 +13,5 @@ Valid Login with Standard User
 
 	Login As Standard User
 
-	Element should be visible  accessibility_id=test-PRODUCTS
+	Wait Until Element Is Visible  accessibility_id=test-PRODUCTS
 	[Teardown]  End Session

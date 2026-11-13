@@ -1,7 +1,7 @@
 *** Settings ***
 Library    AppiumLibrary
 Variables  ../../sauce_tags.py  framework:robotframework  cli:pabot  library:appiumlibrary
-...        usecase:native-app  platform:android  device:real-device
+...        usecase:native-app  feature:network-capture  platform:android  device:real-device
 
 *** Variables ***
 ${REMOTE_URL}       ${DATA_CENTER}
@@ -15,6 +15,7 @@ Start Session
     ...  name=${TEST_NAME}
     ...  appiumVersion=latest
     ...  tags=${SAUCE_TAGS_LIST}
+    ...  networkCapture=${True}
     Open Application  ${REMOTE_URL}
     ...  platformName=${platformName}
     ...  appium:platformVersion=${platformVersion}

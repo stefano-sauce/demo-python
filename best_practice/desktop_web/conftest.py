@@ -15,6 +15,12 @@ BROWSER_OPTIONS = {
     'safari': SafariOptions,
 }
 
+# sauce:options flag -> Sauce Labs tag, so jobs with extra data (HAR, performance) are easy to find
+FEATURE_TAGS = {
+    'extendedDebugging': 'feature:extended-debugging',
+    'capturePerformance': 'feature:performance-mode',
+}
+
 desktop_browsers = [
     {
         "platformName": "Windows 10",
@@ -42,8 +48,11 @@ desktop_browsers = [
         "platformName": "macOS 13",
         "browserName": "chrome",
         "platformVersion": "latest",
+        # Sauce Performance: Chrome (latest 3 versions) on Windows, Linux or macOS 13, WebDriver Classic,
+        # extendedDebugging + capturePerformance. Metrics are captured for each page transition.
         "sauce:options": {
-            "extendedDebugging": True
+            "extendedDebugging": True,
+            "capturePerformance": True
         }
     }]
 
@@ -87,11 +96,12 @@ def desktop_web_driver(request, data_center):
     options.platform_name = request.param['platformName']
     options.browser_version = request.param['platformVersion']
     sauce_options = dict(request.param['sauce:options'])
+    feature_tags = [tag for option, tag in FEATURE_TAGS.items() if sauce_options.get(option)]
     sauce_options.update({
         'build': build_tag,
         'name': test_name,
         'tags': sauce_tags('framework:selenium', 'cli:pytest', 'usecase:desktop-web-best-practices',
-                           'browser:' + slug(browser_name), 'os:' + slug(request.param['platformName'])),
+                           'browser:' + slug(browser_name), 'os:' + slug(request.param['platformName']), *feature_tags),
     })
     options.set_capability('sauce:options', sauce_options)
 

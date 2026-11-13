@@ -13,6 +13,6 @@ Invalid Login with Invalid User
 
 	Login As Invalid User
 
-	Page should contain element  accessibility_id=test-Error message
+	Wait Until Page Contains Element  accessibility_id=test-Error message
 	[Teardown]  End Session
 
