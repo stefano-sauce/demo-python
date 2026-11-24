@@ -38,7 +38,7 @@ def driver(request):
                                         'browser:chrome', 'os:windows-10')}
 
     options.set_capability('sauce:options', sauce_options)
-    region = os.environ.get('SAUCE_REGION', 'us-west-1')
+    region = os.environ.get('SAUCE_REGION', 'eu-central-1')
     sauce_url = "https://ondemand.{}.saucelabs.com/wd/hub".format(region)
 
     driver = webdriver.Remote(command_executor=sauce_url, options=options)

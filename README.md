@@ -83,13 +83,10 @@ directory. `cd` into the listed directory first, then run
   - `playwright-tests` — runs the Playwright examples
 
 - `examples/robotframework/desktop_web/`
-  - `robot-desktop-web-us` — runs desktop web robot tests against US datacenter
   - `robot-desktop-web-eu` — runs desktop web robot tests against EU datacenter
 
 - `examples/robotframework/native_mobile/`
-  - `robot-android-us` — runs native Android robot tests against US datacenter
   - `robot-android-eu` — runs native Android robot tests against EU datacenter
-  - `robot-ios-us` — runs native iOS robot tests against US datacenter
   - `robot-ios-eu` — runs native iOS robot tests against EU datacenter
 
 Notes:

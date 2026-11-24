@@ -69,7 +69,7 @@ def sauce_tags(*tags):
 
 
 def pytest_addoption(parser):
-    parser.addoption("--dc", action="store", default='us', help="Set Sauce Labs Data Center (US or EU)")
+    parser.addoption("--dc", action="store", default='eu', help="Set Sauce Labs Data Center (US or EU)")
 
 
 @pytest.fixture
@@ -86,10 +86,10 @@ def desktop_web_driver(request, data_center):
     username = environ['SAUCE_USERNAME']
     access_key = environ['SAUCE_ACCESS_KEY']
 
-    if data_center and data_center.lower() == 'eu':
-        selenium_endpoint = "https://{}:{}@ondemand.eu-central-1.saucelabs.com/wd/hub".format(username, access_key)
-    else:
+    if data_center and data_center.lower() == 'us':
         selenium_endpoint = "https://{}:{}@ondemand.us-west-1.saucelabs.com/wd/hub".format(username, access_key)
+    else:
+        selenium_endpoint = "https://{}:{}@ondemand.eu-central-1.saucelabs.com/wd/hub".format(username, access_key)
 
     browser_name = request.param['browserName']
     options = BROWSER_OPTIONS[browser_name.lower()]()

@@ -18,7 +18,7 @@ def sauce_tags(*tags):
 
 
 def pytest_addoption(parser):
-    parser.addoption("--dc", action="store", default='us', help="Set Sauce Labs Data Center (US or EU)")
+    parser.addoption("--dc", action="store", default='eu', help="Set Sauce Labs Data Center (US or EU)")
 
 
 @pytest.fixture
@@ -49,10 +49,10 @@ def android_rdc_driver(request, data_center):
     }
     options.set_capability('sauce:options', sauce_options)
 
-    if data_center and data_center.lower() == 'eu':
-        sauce_url = 'https://ondemand.eu-central-1.saucelabs.com/wd/hub'
-    else:
+    if data_center and data_center.lower() == 'us':
         sauce_url = 'https://ondemand.us-west-1.saucelabs.com/wd/hub'
+    else:
+        sauce_url = 'https://ondemand.eu-central-1.saucelabs.com/wd/hub'
 
     driver = appiumdriver.Remote(sauce_url, options=options)
     yield driver
@@ -83,10 +83,10 @@ def ios_rdc_driver(request, data_center):
     }
     options.set_capability('sauce:options', sauce_options)
 
-    if data_center and data_center.lower() == 'eu':
-        sauce_url = "https://ondemand.eu-central-1.saucelabs.com/wd/hub"
-    else:
+    if data_center and data_center.lower() == 'us':
         sauce_url = "https://ondemand.us-west-1.saucelabs.com/wd/hub"
+    else:
+        sauce_url = "https://ondemand.eu-central-1.saucelabs.com/wd/hub"
 
     driver = appiumdriver.Remote(sauce_url, options=options)
     yield driver

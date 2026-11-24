@@ -117,7 +117,7 @@ examples/playwright/
 |----------|---------|--------------|
 | `TARGET` | `local` | Where the browser runs: `local` or `sauce` |
 | `GROUPING` | `module` | Session sharing: `module` (one session per test file) or `test` (one per test) |
-| `SAUCE_REGION` | `us-west-1` | Data center for all Sauce Labs URLs (e.g. `us-east-1`, `eu-central-1`). Only used when `TARGET=sauce` |
+| `SAUCE_REGION` | `eu-central-1` | Data center for all Sauce Labs URLs (e.g. `us-east-1`, `eu-central-1`). Only used when `TARGET=sauce` |
 | `SAUCE_BUILD_NAME` | `Playwright Python_<timestamp>` | Build name shown on the Sauce Labs dashboard. Only used when `TARGET=sauce` |
 | `SAUCE_USERNAME` / `SAUCE_ACCESS_KEY` | - | Sauce Labs credentials. Only used when `TARGET=sauce` |
 

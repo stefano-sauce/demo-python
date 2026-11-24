@@ -48,7 +48,7 @@ emusim_browsers = [
 
 
 def pytest_addoption(parser):
-    parser.addoption("--dc", action="store", default='us', help="Set Sauce Labs Data Center (US or EU)")
+    parser.addoption("--dc", action="store", default='eu', help="Set Sauce Labs Data Center (US or EU)")
 
 
 @pytest.fixture
@@ -65,10 +65,10 @@ def mobile_web_driver(request, data_center):
     username = environ['SAUCE_USERNAME']
     access_key = environ['SAUCE_ACCESS_KEY']
 
-    if data_center and data_center.lower() == 'eu':
-        selenium_endpoint = "https://@ondemand.eu-central-1.saucelabs.com/wd/hub"
-    else:
+    if data_center and data_center.lower() == 'us':
         selenium_endpoint = "https://@ondemand.us-west-1.saucelabs.com/wd/hub"
+    else:
+        selenium_endpoint = "https://@ondemand.eu-central-1.saucelabs.com/wd/hub"
 
     sauce_options = {
         'username': username,
@@ -145,10 +145,10 @@ def rdc_browser(request, data_center):
     # (measured on Sauce EU: 0/13 passed there, 31/31 on iOS 16-18), so pin to iOS 18.x
     options.platform_version = '18'
 
-    if data_center and data_center.lower() == 'eu':
-        sauce_url = 'https://ondemand.eu-central-1.saucelabs.com/wd/hub'
-    else:
+    if data_center and data_center.lower() == 'us':
         sauce_url = 'https://ondemand.us-west-1.saucelabs.com/wd/hub'
+    else:
+        sauce_url = 'https://ondemand.eu-central-1.saucelabs.com/wd/hub'
 
     driver = appiumdriver.Remote(sauce_url, options=options)
     yield driver

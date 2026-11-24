@@ -10,7 +10,7 @@ SAUCE_DEMO_URL = "https://www.saucedemo.com/"
 
 SAUCE_USERNAME = os.environ.get("SAUCE_USERNAME", "")
 SAUCE_ACCESS_KEY = os.environ.get("SAUCE_ACCESS_KEY", "")
-SAUCE_REGION = os.environ.get("SAUCE_REGION", "us-west-1")
+SAUCE_REGION = os.environ.get("SAUCE_REGION", "eu-central-1")
 SAUCE_URL = f"https://ondemand.{SAUCE_REGION}.saucelabs.com"
 SAUCE_API_URL = f"https://api.{SAUCE_REGION}.saucelabs.com"
 SAUCE_BUILD_NAME = os.environ.get(
